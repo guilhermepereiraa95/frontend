@@ -57,7 +57,7 @@ export default function NewMenu() {
 
       await api.post('produtos', data);
 
-      history.push('/perfil');
+      history.push('/produtos');
     } catch (err) {
       alert('Erro ao cadastrar caso, tente novamente.');
     }
