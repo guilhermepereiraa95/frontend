@@ -10,7 +10,8 @@ import PusherContext from '../../context/PusherContext';
 
 export default function Checkout() {
   const [items, setItems] = useState([]);  
-  const {pedido, setPedido} = useContext(PusherContext);
+  const {pedido, setPedido} = useContext(PusherContext);  
+  const [progress, setProgress] = useState('width: 50%');
   const [total, setTotal] = useState();
   const [pusher, setPusher] = useState();
 
@@ -42,6 +43,7 @@ export default function Checkout() {
             channel.bind('confirmacao-pedido', function(data) {
               
               setPedido(data)
+              
             });      
           }
           return;
@@ -49,6 +51,8 @@ export default function Checkout() {
 
   return (
     <div className="checkout-container">
+      
+      
       <header>
         
       <h1>Acompanhamento do pedido. Obrigado pela preferência, {pedido.nome}.</h1>
@@ -57,7 +61,11 @@ export default function Checkout() {
       {/* <img src={logoImg} className= alt="Smoke Meat House" />  */}
       </header>
        
-      <section>  
+      <section className='card card-body'>  
+      <div class="progress">
+        <div class="progress-bar progress-bar-striped" role="progressbar" 
+        aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
+      </div>
         
       <div>{pedido.status}</div>    
       <ul>
