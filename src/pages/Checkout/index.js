@@ -55,7 +55,8 @@ export default function Checkout() {
       
       <header>
         
-      <h1>Acompanhamento do pedido. Obrigado pela preferência, {pedido.nome}.</h1>
+      <p className='h2'>Acompanhamento do pedido</p>
+      <p className='h3'>Obrigado pela preferência, {pedido.nome}!</p>
       
       <span>Local: {pedido.localizacao}</span>  
       {/* <img src={logoImg} className= alt="Smoke Meat House" />  */}
