@@ -237,14 +237,9 @@ export default function Menu() {
               </div>
             ))}
           </div>
-          <input
-            placeholder="Pagamento"
-            value={pagamento}
-            
-          />
 
           <select className="form-select form-select-lg my-3" onChange={e => setPagamento(e.target.value)}>
-            {tipos.map((pagamentos) => (
+            {pagamentos.map((pagamentos) => (
               <option key={pagamentos.id} value={pagamentos.value}>{pagamentos.label}</option>
             ))}
           </select>
