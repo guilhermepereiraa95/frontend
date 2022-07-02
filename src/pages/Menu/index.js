@@ -176,13 +176,15 @@ export default function Menu() {
 
         <form onSubmit={handleRegister}>
           <input
-            placeholder="Seu nome"
+            placeholder="Seu nome"            
+            className="form-control mt-2"
             value={nome}
             onChange={e => setNome(e.target.value)}
           />
 
           <input            
             ref={ref}
+            className="form-control mt-2"
             type="localizacao"
             placeholder="Local"
             value={localizacao}
@@ -246,6 +248,7 @@ export default function Menu() {
 
           <input
             placeholder="Observações"
+            className="form-control mt-2"
             value={observacao}
             onChange={e => setObservacao(e.target.value)}
           />
