@@ -97,7 +97,7 @@ export default function NewMenu() {
             onChange={e => setDescription(e.target.value)}
           />
 
-          <select onChange={e => handleChange(e.target.value)}>
+          <select className="form-select form-select-lg my-3" onChange={e => handleChange(e.target.value)}>
             {tipos.map((tipos) => (
               <option key={tipos.id} value={tipos.value}>{tipos.label}</option>
             ))}
