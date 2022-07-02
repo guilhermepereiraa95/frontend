@@ -50,6 +50,24 @@ export default function Menu() {
     }
   ]);
 
+  const [pagamentos] = useState([
+    {
+      id: 1,
+      label: 'Débito',
+      value: 'debito'
+    },
+    {
+      id: 2,
+      label: 'Crédito',
+      value: 'credito'
+    },
+    {
+      id: 3,
+      label: 'Dinheiro',
+      value: 'dinheiro'
+    }
+  ]);
+
   useEffect(() => {
     api.get('produtos').then(response => {
       const lanches = response.data.lanches.map((item) => ({ ...item, qtd: 0 }));
@@ -222,8 +240,14 @@ export default function Menu() {
           <input
             placeholder="Pagamento"
             value={pagamento}
-            onChange={e => setPagamento(e.target.value)}
+            
           />
+
+          <select className="form-select form-select-lg my-3" onChange={e => setPagamento(e.target.value)}>
+            {tipos.map((pagamentos) => (
+              <option key={pagamentos.id} value={pagamentos.value}>{pagamentos.label}</option>
+            ))}
+          </select>
 
           <input
             placeholder="Observações"
