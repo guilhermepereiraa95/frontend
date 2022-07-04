@@ -23,7 +23,7 @@ export default function Menu() {
   const [loader, setLoader] = useState(false);
   const [nome, setNome] = useState([]);
   const [localizacao, setLocalizacao] = useState([]);
-  const [pagamento, setPagamento] = useState([]);
+  const [pagamento, setPagamento] = useState(["Débito"]);
   const [observacao, setObservacao] = useState([]);
   const [pedido, setPedido] = useState([]);
   const [menu, setMenu] = useState({});
