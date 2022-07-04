@@ -22,7 +22,7 @@ const ValidationSchema = Yup.object().shape({
 
 export default function Login() {
 
-  const { handleChange, submitForm, setFieldValue, values, validateForm, errors } = useFormik({
+  const { handleChange, submitForm, values, validateForm, errors } = useFormik({
     initialValues: {
       login: '',
       password: ''

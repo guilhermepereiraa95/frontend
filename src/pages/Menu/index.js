@@ -5,15 +5,39 @@ import { usePlacesWidget } from 'react-google-autocomplete';
 import { ThreeDots } from 'react-loader-spinner';
 import toast, { Toaster } from 'react-hot-toast';
 
+import *  as Yup from 'yup';
+import { Formik, useFormik } from 'formik';
+
 import api from '../../services/api';
 import './styles.css';
 
 import logoImg from '../../assets/logo.svg';
 
+const ValidationSchema = Yup.object().shape({
+  nome: Yup.string().required('Campo obrigatório'),
+  localizacao: Yup.string().required('Campo obrigatório'),
+  pagamento: Yup.string().required('Campo obrigatório'),
+  observacao: Yup.string(),
+})
+
+
 export default function Menu() {
+  const { handleChange, submitForm, values, validateForm, errors } = useFormik({
+    initialValues: {
+      nome: '',
+      localizacao: '',
+      pagamento: '',
+      observacao: ''
+    },
+    validationSchema: ValidationSchema,
+    onSubmit: values => {
+        handleSubmitForm(values)
+    }
+  })
+
   const { ref } = usePlacesWidget({
     apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
-    onPlaceSelected: (place) => setLocalizacao(place.formatted_address),
+    onPlaceSelected: (place) => {values.localizacao = place.formatted_address},
     options: {
       types: ["geocode"],
       componentRestrictions: { country: "br" },
@@ -21,19 +45,18 @@ export default function Menu() {
   })
 
   const [loader, setLoader] = useState(false);
-  const [nome, setNome] = useState([]);
-  const [items, setItems] = useState([]);
+  // const [nome, setNome] = useState([]);
   const [total, setTotal] = useState([]);
-  const [localizacao, setLocalizacao] = useState([]);
-  const [pagamento, setPagamento] = useState(["Débito"]);
-  const [observacao, setObservacao] = useState([]);
+  // const [localizacao, setLocalizacao] = useState([]);
+  // const [pagamento, setPagamento] = useState(["Débito"]);
+  // const [observacao, setObservacao] = useState([]);
   const [pedido, setPedido] = useState([]);
   const [menu, setMenu] = useState({});
   const [tipos] = useState([
     {
       id: 1,
       label: 'Lanches',
-      value: 'lanche'
+      value: 'lanches'
     },
     {
       id: 2,
@@ -85,9 +108,21 @@ export default function Menu() {
 
   }, [])
 
+  async function validar() {
+    validateForm().then(erros => {
+      if(Object.keys(erros).length){
+        alert(JSON.stringify(erros))
+      } else {
+      if(pedido.length > 0){
+        handleRegister();
+      } else toast.error('Você não inseriu itens no pedido!')
+      }
+    })
+  }
+
   const history = useHistory();
 
-  async function handleChange(e) {
+  async function handleChangeSelect(e) {
     document.getElementById(e).scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
@@ -139,17 +174,16 @@ export default function Menu() {
 
   useEffect(() => { console.log(pedido) }, [pedido])
 
-  async function submitForm() {
-    const data = {
-      nome,
-      localizacao,
-      pagamento,
-      pedido,
-      observacao
-    };
+  async function handleSubmitForm(values) {
+    
     try {
       toast.promise(
-        api.post('pedidos', data)
+        api.post('pedidos', {
+          nome: values.nome, 
+          localizacao: values.localizacao,
+          observacao: values.observacao,
+          pagamento: values.pagamento,
+          pedido})
         .then(response => {
           if (response.status == 200) {
             
@@ -169,7 +203,7 @@ export default function Menu() {
           setLoader(false)
         }),
          {
-           loading: 'Checando...',
+           loading: 'Enviando...',
            success: <b>Pedido enviado!</b>,
            error: <b>Erro ao enviar pedido.</b>,
          }
@@ -180,26 +214,19 @@ export default function Menu() {
     }
 
   }
-  async function handleRegister(e) {
-    e.preventDefault();
+  async function handleRegister() {
+    // e.preventDefault();
 
     setLoader(true);
 
-    const data = {
-      nome,
-      localizacao,
-      pagamento,
-      pedido,
-      observacao
-    };
     setTotal(0);
     console.log(pedido)
     toast((t) => (
       <span>
-        <p>{data.nome}</p>
-        <p>{data.localizacao}</p>
-        <p>{data.pagamento}</p>
-        <p>{data.observacao}</p>
+        <p>{values.nome}</p>
+        <p>{values.localizacao}</p>
+        <p>{values.pagamento}</p>
+        <p>{values.observacao}</p>
         {
           pedido.map((p) => {
             setTotal(total + p.value)
@@ -210,10 +237,10 @@ export default function Menu() {
               </table>
             )
           })
-
         }
         {total && (<p>{total}</p>)}
-        <button className="btn btn-danger" onClick={() => 
+        <div className='d-flex justify-content-between'>
+        <button className="btn btn-sm btn-danger" onClick={() => 
           { 
             toast.dismiss(t.id)
             setLoader(false);
@@ -221,9 +248,16 @@ export default function Menu() {
           }>
           Cancelar pedido
         </button>
-        <button className="btn btn-danger" onClick={() => submitForm()}>
+        <button className="btn btn-sm btn-danger" onClick={() => {
+            handleSubmitForm(values);
+            toast.dismiss(t.id)
+            
+          }
+        }>
           Confirmar pedido
         </button>
+        </div>
+        
       </span>
     ), {
       duration: 100000
@@ -240,24 +274,28 @@ export default function Menu() {
           <p>Peça agora lanches artesanais e porções com carnes defumadas da melhor qualidade!</p>
         </section>
 
-        <form onSubmit={handleRegister}>
+        <div id="form">
           <input
             placeholder="Seu nome"
             className="form-control mt-2"
-            value={nome}
-            onChange={e => setNome(e.target.value)}
+            name="nome"
+            value={values.nome}
+            onChange={handleChange}
           />
+          {errors.nome && <p className="text-danger">{errors.nome}</p>}
 
           <input
             ref={ref}
             className="form-control mt-2"
-            type="localizacao"
+            name="localizacao"
             placeholder="Local"
-            value={localizacao}
-            onChange={e => setLocalizacao(e.target.value)}
+            value={values.localizacao}
+            onChange={handleChange}
           />
 
-          <select className="form-select form-select-lg my-3" onChange={e => handleChange(e.target.value)}>
+          {errors.localizacao && <p className="text-danger">{errors.localizacao}</p>}
+
+          <select className="form-select form-select-lg my-3" onChange={e => handleChangeSelect(e.target.value)}>
             {tipos.map((tipos) => (
               <option key={tipos.id} value={tipos.value}>{tipos.label}</option>
             ))}
@@ -306,30 +344,30 @@ export default function Menu() {
             ))}
           </div>
 
-          <select className="form-select form-select-lg my-3" onChange={e => setPagamento(e.target.value)}>
+          <select name="pagamento" value={values.pagamento} className="form-select form-select-lg my-3" onChange={handleChange}>
             {pagamentos.map((pagamentos) => (
               <option key={pagamentos.id} value={pagamentos.value}>{pagamentos.label}</option>
             ))}
           </select>
-
+          {errors.pagamento && <p className="text-danger">{errors.pagamento}</p>}
           <input
             placeholder="Observações"
+            name="observacao"
             className="form-control mt-2"
-            value={observacao}
-            onChange={e => setObservacao(e.target.value)}
+            value={values.observacao}
+            onChange={handleChange}
           />
 
-          <button className="button d-flex justify-content-center" type="submit">
-            {!loader && 'Realizar pedido'}
-            {loader &&
-              (<ThreeDots
-                height="50px"
-                width="50px"
-                color="white"
-                ariaLabel="loading"
-              />)}
+          <button onClick={() => validar()} className="button d-flex justify-content-center" type="submit">
+          {!loader && 'Realizar pedido'}  
+            {loader && (<ThreeDots
+              height="50px"
+              width="50px"
+              color="white"
+              ariaLabel="loading"
+            />)}    
           </button>
-        </form>
+        </div>
       </div>
     </div>
   );
