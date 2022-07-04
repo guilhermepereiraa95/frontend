@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { FiPlus, FiMinus } from 'react-icons/fi';
-import {usePlacesWidget} from 'react-google-autocomplete';
-import { ThreeDots } from  'react-loader-spinner';
+import { usePlacesWidget } from 'react-google-autocomplete';
+import { ThreeDots } from 'react-loader-spinner';
 import toast, { Toaster } from 'react-hot-toast';
 
 import api from '../../services/api';
@@ -19,9 +19,11 @@ export default function Menu() {
       componentRestrictions: { country: "br" },
     },
   })
-  
+
   const [loader, setLoader] = useState(false);
   const [nome, setNome] = useState([]);
+  const [items, setItems] = useState([]);
+  const [total, setTotal] = useState([]);
   const [localizacao, setLocalizacao] = useState([]);
   const [pagamento, setPagamento] = useState(["Débito"]);
   const [observacao, setObservacao] = useState([]);
@@ -69,12 +71,16 @@ export default function Menu() {
   ]);
 
   useEffect(() => {
+
     api.get('produtos').then(response => {
+
       const lanches = response.data.lanches.map((item) => ({ ...item, qtd: 0 }));
       const bebidas = response.data.bebidas.map((item) => ({ ...item, qtd: 0 }));
       const porcoes = response.data.porcoes.map((item) => ({ ...item, qtd: 0 }));
       const sobremesas = response.data.sobremesas.map((item) => ({ ...item, qtd: 0 }));
       setMenu({ lanches, bebidas, porcoes, sobremesas });
+
+
     });
 
   }, [])
@@ -131,12 +137,52 @@ export default function Menu() {
 
   }
 
-  useEffect(() => console.log('meus pedidos', pedido), [pedido])
+  useEffect(() => { console.log(pedido) }, [pedido])
+
+  async function submitForm() {
+    const data = {
+      nome,
+      localizacao,
+      pagamento,
+      pedido,
+      observacao
+    };
+    try {
+      toast.promise(
+        api.post('pedidos', data)
+        .then(response => {
+          if (response.status == 200) {
+            
+            setInterval(() => {
+              if (response.data.id) {
+                history.push(`/checkout/${response.data.id}`);
+              }
+            }, 1200);
 
 
+          } else {
+            toast.error('Erro ao realizar pedido: ', response.statusText);
+            return;
+          }
+        })
+        .finally(() => {
+          setLoader(false)
+        }),
+         {
+           loading: 'Checando...',
+           success: <b>Pedido enviado!</b>,
+           error: <b>Erro ao enviar pedido.</b>,
+         }
+       );
+      
+    } catch (error) {
+      toast.error('Erro no cadastro', error)
+    }
+
+  }
   async function handleRegister(e) {
     e.preventDefault();
-    
+
     setLoader(true);
 
     const data = {
@@ -146,24 +192,44 @@ export default function Menu() {
       pedido,
       observacao
     };
+    setTotal(0);
+    console.log(pedido)
+    toast((t) => (
+      <span>
+        <p>{data.nome}</p>
+        <p>{data.localizacao}</p>
+        <p>{data.pagamento}</p>
+        <p>{data.observacao}</p>
+        {
+          pedido.map((p) => {
+            setTotal(total + p.value)
+            return (
+              <table className="table" key={p.id}>
+                <td>{p.title} x{p.qtd}</td>
+                <td>{p.value}</td>
+              </table>
+            )
+          })
 
-    try {
-      api.post('pedidos', data)
-      .then(response => {  
-        
-        toast.success('Sucesso!');
-        if(response.data.id){
-          history.push(`/checkout/${response.data.id}`);
         }
-      })
-      .finally(() => {
-        setLoader(false);
-      });
+        {total && (<p>{total}</p>)}
+        <button className="btn btn-danger" onClick={() => 
+          { 
+            toast.dismiss(t.id)
+            setLoader(false);
+            }
+          }>
+          Cancelar pedido
+        </button>
+        <button className="btn btn-danger" onClick={() => submitForm()}>
+          Confirmar pedido
+        </button>
+      </span>
+    ), {
+      duration: 100000
+    });
+  }
 
-    } catch (err) {
-      toast.error('Erro no cadastro, tente novamente.', { type: 'error' });
-    }
-  }  
 
   return (
     <div className="register-container">
@@ -176,13 +242,13 @@ export default function Menu() {
 
         <form onSubmit={handleRegister}>
           <input
-            placeholder="Seu nome"            
+            placeholder="Seu nome"
             className="form-control mt-2"
             value={nome}
             onChange={e => setNome(e.target.value)}
           />
 
-          <input            
+          <input
             ref={ref}
             className="form-control mt-2"
             type="localizacao"
@@ -211,11 +277,11 @@ export default function Menu() {
                           <p>{comida.description}</p>
                         </div>
                         <div className="card-left noselect">
-                          <p> 
-                            {comida.qtd > 0 && 
-                            (Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(comida.value * comida.qtd))}
-                            {comida.qtd === 0 && 
-                            (Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(comida.value))}                          
+                          <p>
+                            {comida.qtd > 0 &&
+                              (Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(comida.value * comida.qtd))}
+                            {comida.qtd === 0 &&
+                              (Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(comida.value))}
                           </p>
                           <div className="btn-group" role="group">
                             <a type="button"
@@ -225,11 +291,11 @@ export default function Menu() {
                             </a>
                             <span className="input-group-text">{comida.qtd}</span>
                             <a type="button"
-                            onClick={e => addOrRemoveOrder(comida.id, key)}
-                            className="btn btn-danger">
-                            <FiPlus size={20} color="#fff"></FiPlus></a>
+                              onClick={e => addOrRemoveOrder(comida.id, key)}
+                              className="btn btn-danger">
+                              <FiPlus size={20} color="#fff"></FiPlus></a>
                           </div>
-                          
+
                         </div>
                       </div>
                     </section>
@@ -254,15 +320,15 @@ export default function Menu() {
           />
 
           <button className="button d-flex justify-content-center" type="submit">
-            {!loader && 'Realizar pedido'}  
-            {loader && 
-            (<ThreeDots
-              height="50px"
-              width="50px"
-              color="white"
-              ariaLabel="loading"
-            />)}          
-            </button>
+            {!loader && 'Realizar pedido'}
+            {loader &&
+              (<ThreeDots
+                height="50px"
+                width="50px"
+                color="white"
+                ariaLabel="loading"
+              />)}
+          </button>
         </form>
       </div>
     </div>
