@@ -111,7 +111,7 @@ export default function Menu() {
   async function validar() {
     validateForm().then(erros => {
       if(Object.keys(erros).length){
-        alert(JSON.stringify(erros))
+        toast.error('Há campos faltando preenchimento!')
       } else {
       if(pedido.length > 0){
         handleRegister();
@@ -183,7 +183,8 @@ export default function Menu() {
           localizacao: values.localizacao,
           observacao: values.observacao,
           pagamento: values.pagamento,
-          pedido})
+          pedido
+        })
         .then(response => {
           if (response.status == 200) {
             
@@ -223,6 +224,7 @@ export default function Menu() {
     console.log(pedido)
     toast((t) => (
       <span>
+        <strong>Confira seu pedido:</strong>
         <p>{values.nome}</p>
         <p>{values.localizacao}</p>
         <p>{values.pagamento}</p>
@@ -239,7 +241,7 @@ export default function Menu() {
           })
         }
         {total && (<p>{total}</p>)}
-        <div className='d-flex justify-content-between'>
+        <div className='d-flex justify-content-around'>
         <button className="btn btn-sm btn-danger" onClick={() => 
           { 
             toast.dismiss(t.id)
@@ -248,7 +250,7 @@ export default function Menu() {
           }>
           Cancelar pedido
         </button>
-        <button className="btn btn-sm btn-danger" onClick={() => {
+        <button className="btn btn-sm btn-success" onClick={() => {
             handleSubmitForm(values);
             toast.dismiss(t.id)
             
