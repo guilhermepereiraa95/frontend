@@ -30,8 +30,8 @@ export default function Items() {
             Authorization: token,
           }
         }).then(response => {
+          console.log(response)
             setItems(response.data.pedido);
-            setTotal(response.data.total)
         }).catch((err) => {
           console.log(err)
         });
