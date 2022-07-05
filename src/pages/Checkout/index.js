@@ -20,12 +20,17 @@ export default function Checkout() {
   useEffect(() => {
       if (params.id > 0) {
         api.get(`pedido-produto/${params.id}`).then(response => {
-          setItems(response.data.pedido);
-          setTotal(response.data.total);
+          setItems(response.data);
+          let total = 0;
+            response.data.map(items =>{
+              total =+ total + items.value;
+            })
+            setTotal(total)
         })
 
         api.get(`pedidos/${params.id}`).then(res => {
           setPedido(res.data);
+
         })
 
         const pusherInstance = new Pusher('81dfc3beb94ac0494c83', {

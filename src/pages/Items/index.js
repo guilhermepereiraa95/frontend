@@ -31,7 +31,12 @@ export default function Items() {
           }
         }).then(response => {
           console.log(response)
-            setItems(response.data.pedido);
+            setItems(response.data);
+            let total = 0;
+            response.data.map(items =>{
+              total =+ total + items.value;
+            })
+            setTotal(total)
         }).catch((err) => {
           console.log(err)
         });
