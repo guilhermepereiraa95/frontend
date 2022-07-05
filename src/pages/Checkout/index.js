@@ -57,18 +57,14 @@ export default function Checkout() {
     <div className="checkout-container">
       
       <div className='row'>
-      <div className="col- d-flex justify-content-center">
+      <div className="col-12 d-flex justify-content-center">
         <img src={logoImg} alt="Smoke Meat House"/>
       </div>
-        <div className="col-6">
-          
-          <p className='h2'>Acompanhamento do pedido</p>
-          <p className='h3'>Obrigado pela preferência, {pedido.nome}!</p>
-          
-          <span>Local: {pedido.localizacao}</span>  
-        </div>
-        <div className="col-6">
+        <div className="col-12 d-flex justify-content-center">
           <section className='card card-body'>  
+          <p className='h2 text-center'>Acompanhamento do pedido {pedido.id}</p>
+          <p className='h3 text-center'>Obrigado pela preferência, {pedido.nome}!</p>
+          <p>Local: {pedido.localizacao}</p> 
           <div class="progress">
             {
               pedido.status === "Pedido aguardando confirmação"
@@ -105,9 +101,8 @@ export default function Checkout() {
             ))}
             <li><strong> <p>Total {Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total)}</p></strong>  </li>
           </ul>
-          
-          
           </section>
+          
         </div>
       </div>
     </div>
