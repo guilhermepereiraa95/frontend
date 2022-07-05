@@ -10,8 +10,7 @@ import PusherContext from '../../context/PusherContext';
 
 export default function Checkout() {
   const [items, setItems] = useState([]);  
-  const {pedido, setPedido} = useContext(PusherContext);  
-  const [progress, setProgress] = useState('width: 50%');
+  const {pedido, setPedido} = useContext(PusherContext);
   const [total, setTotal] = useState();
   const [pusher, setPusher] = useState();
 
@@ -66,10 +65,31 @@ export default function Checkout() {
         <div className="col-6">
           <section className='card card-body'>  
           <div class="progress">
-            <div class="progress-bar progress-bar-striped" role="progressbar" 
-            aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
-          </div>
+            {
+              pedido.status === "Pedido aguardando confirmação"
+              && (
+                <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated" role="progressbar" 
+                style={{width: '15%'}}></div>
+              )
+            }
+            {
+              pedido.status === "Pedido sendo preparado!"
+              && (
+                <div class="progress-bar bg-warning progress-bar-striped progress-bar-animated" role="progressbar" 
+                style={{width: '40%'}}></div>
+              )
+            }
+            {
+              pedido.status === "Saiu para entrega"
+              && (
+                <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar" 
+                style={{width: '60%'}}></div>
+              )
+            }
             
+            
+            
+          </div>
           <div>{pedido.status}</div>    
           <ul>
             {items.map(items => (

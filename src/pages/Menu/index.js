@@ -214,10 +214,11 @@ export default function Menu() {
 
   }
   async function handleRegister() {
-    // e.preventDefault();
-
+    var total = 0;
+    for (let p of pedido) {
+      total = total + p.value;
+    }
     setLoader(true);
-
     console.log(pedido)
     toast((t) => (
       <span>
@@ -228,16 +229,24 @@ export default function Menu() {
         <p>{values.observacao}</p>
         {
           pedido.map((p) => {
-            setTotal(total + p.value)
+            
             return (
-              <table className="table" key={p.id}>
-                <td>{p.title} x{p.qtd}</td>
-                <td>{p.value}</td>
-              </table>
+              <>
+                <table className="table" key={p.id}>
+                  <td>{p.title} x{p.qtd}</td>
+                  <td>
+                    {
+                      Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
+                      .format(p.value * p.qtd)
+                    }
+                  </td>
+                </table>
+              </>
             )
           })
         }
-        {total && (<p>{total}</p>)}
+        
+        <p>{Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total)}</p>
         <div className='d-flex justify-content-around'>
         <button className="btn btn-sm btn-danger" onClick={() => 
           { 
@@ -258,9 +267,7 @@ export default function Menu() {
         </div>
         
       </span>
-    ), {
-      duration: 100000
-    });
+    ),{ persistent: true });
   }
 
 
