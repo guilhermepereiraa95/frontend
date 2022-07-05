@@ -22,7 +22,7 @@ const ValidationSchema = Yup.object().shape({
 
 
 export default function Menu() {
-  const { handleChange, submitForm, values, validateForm, errors } = useFormik({
+  const { handleChange, submitForm, values, validateForm, errors, setFieldValue } = useFormik({
     initialValues: {
       nome: '',
       localizacao: '',
@@ -37,7 +37,7 @@ export default function Menu() {
 
   const { ref } = usePlacesWidget({
     apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
-    onPlaceSelected: (place) => {values.localizacao = place.formatted_address},
+    onPlaceSelected: (place) => {setFieldValue('localizacao', place.formatted_address)},
     options: {
       types: ["geocode"],
       componentRestrictions: { country: "br" },
@@ -46,7 +46,7 @@ export default function Menu() {
 
   const [loader, setLoader] = useState(false);
   // const [nome, setNome] = useState([]);
-  const [total, setTotal] = useState([]);
+  const [total, setTotal] = useState([0]);
   // const [localizacao, setLocalizacao] = useState([]);
   // const [pagamento, setPagamento] = useState(["Débito"]);
   // const [observacao, setObservacao] = useState([]);
@@ -102,8 +102,6 @@ export default function Menu() {
       const porcoes = response.data.porcoes.map((item) => ({ ...item, qtd: 0 }));
       const sobremesas = response.data.sobremesas.map((item) => ({ ...item, qtd: 0 }));
       setMenu({ lanches, bebidas, porcoes, sobremesas });
-
-
     });
 
   }, [])
@@ -111,7 +109,7 @@ export default function Menu() {
   async function validar() {
     validateForm().then(erros => {
       if(Object.keys(erros).length){
-        toast.error('Há campos faltando preenchimento!')
+        toast.error('Há campos não preenchidos!')
       } else {
       if(pedido.length > 0){
         handleRegister();
@@ -192,11 +190,11 @@ export default function Menu() {
               if (response.data.id) {
                 history.push(`/checkout/${response.data.id}`);
               }
-            }, 1200);
+            }, 1300);
 
 
           } else {
-            toast.error('Erro ao realizar pedido: ', response.statusText);
+            toast.error('Erro ao realizar pedido. ', response.statusText);
             return;
           }
         })
@@ -220,7 +218,6 @@ export default function Menu() {
 
     setLoader(true);
 
-    setTotal(0);
     console.log(pedido)
     toast((t) => (
       <span>
@@ -251,7 +248,7 @@ export default function Menu() {
           Cancelar pedido
         </button>
         <button className="btn btn-sm btn-success" onClick={() => {
-            handleSubmitForm(values);
+            submitForm(values);
             toast.dismiss(t.id)
             
           }
