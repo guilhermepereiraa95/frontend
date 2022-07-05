@@ -85,7 +85,7 @@ export default function Items() {
               <td>{items.title}</td>
               <td>{items.qtd}</td>
               <td>
-              {Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(items.value)}
+              {Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(items.value * items.qtd)}
               </td>
             </tr>
           ))}
