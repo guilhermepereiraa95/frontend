@@ -31,13 +31,13 @@ export default function Menu() {
     },
     validationSchema: ValidationSchema,
     onSubmit: values => {
-        handleSubmitForm(values)
+      handleSubmitForm(values)
     }
   })
 
   const { ref } = usePlacesWidget({
     apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
-    onPlaceSelected: (place) => {setFieldValue('localizacao', place.formatted_address)},
+    onPlaceSelected: (place) => { setFieldValue('localizacao', place.formatted_address) },
     options: {
       types: ["geocode"],
       componentRestrictions: { country: "br" },
@@ -108,12 +108,12 @@ export default function Menu() {
 
   async function validar() {
     validateForm().then(erros => {
-      if(Object.keys(erros).length){
+      if (Object.keys(erros).length) {
         toast.error('Há campos não preenchidos!')
       } else {
-      if(pedido.length > 0){
-        handleRegister();
-      } else toast.error('Você não inseriu itens no pedido!')
+        if (pedido.length > 0) {
+          handleRegister();
+        } else toast.error('Você não inseriu itens no pedido!')
       }
     })
   }
@@ -173,41 +173,41 @@ export default function Menu() {
   useEffect(() => { console.log(pedido) }, [pedido])
 
   async function handleSubmitForm(values) {
-    
+
     try {
       toast.promise(
         api.post('pedidos', {
-          nome: values.nome, 
+          nome: values.nome,
           localizacao: values.localizacao,
           observacao: values.observacao,
           pagamento: values.pagamento,
           pedido
         })
-        .then(response => {
-          if (response.status == 200) {
-            
-            setInterval(() => {
-              if (response.data.id) {
-                history.push(`/checkout/${response.data.id}`);
-              }
-            }, 1300);
+          .then(response => {
+            if (response.status == 200) {
+
+              setInterval(() => {
+                if (response.data.id) {
+                  history.push(`/checkout/${response.data.id}`);
+                }
+              }, 1300);
 
 
-          } else {
-            toast.error('Erro ao realizar pedido. ', response.statusText);
-            return;
-          }
-        })
-        .finally(() => {
-          setLoader(false)
-        }),
-         {
-           loading: 'Enviando...',
-           success: <b>Pedido enviado!</b>,
-           error: <b>Erro ao enviar pedido.</b>,
-         }
-       );
-      
+            } else {
+              toast.error('Erro ao realizar pedido. ', response.statusText);
+              return;
+            }
+          })
+          .finally(() => {
+            setLoader(false)
+          }),
+        {
+          loading: 'Enviando...',
+          success: <b>Pedido enviado!</b>,
+          error: <b>Erro ao enviar pedido.</b>,
+        }
+      );
+
     } catch (error) {
       toast.error('Erro no cadastro', error)
     }
@@ -229,7 +229,7 @@ export default function Menu() {
         <p>{values.observacao}</p>
         {
           pedido.map((p) => {
-            
+
             return (
               <>
                 <table className="table" key={p.id}>
@@ -237,7 +237,7 @@ export default function Menu() {
                   <td>
                     {
                       Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
-                      .format(p.value * p.qtd)
+                        .format(p.value * p.qtd)
                     }
                   </td>
                 </table>
@@ -245,29 +245,28 @@ export default function Menu() {
             )
           })
         }
-        
+
         <p>{Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total)}</p>
         <div className='d-flex justify-content-around'>
-        <button className="btn btn-sm btn-danger" onClick={() => 
-          { 
+          <button className="btn btn-sm btn-danger" onClick={() => {
             toast.dismiss(t.id)
             setLoader(false);
-            }
+          }
           }>
-          Cancelar pedido
-        </button>
-        <button className="btn btn-sm btn-success" onClick={() => {
+            Cancelar pedido
+          </button>
+          <button className="btn btn-sm btn-success" onClick={() => {
             submitForm(values);
             toast.dismiss(t.id)
-            
+
           }
-        }>
-          Confirmar pedido
-        </button>
+          }>
+            Confirmar pedido
+          </button>
         </div>
-        
+
       </span>
-    ),{ persistent: true });
+    ), { persistent: true });
   }
 
 
@@ -315,12 +314,15 @@ export default function Menu() {
                   return (
                     <section key={comida.id}>
                       <div className="card-menu">
-                        <div className="card-right">
+                      <div className="col-4 border border-dark p-1 rounded">
+                          <img className="img-fluid border-black" src={logoImg} alt="Smoke Meat House" />
+                      </div>
+                        <div className="col-4">
                           <strong>{comida.title}</strong>
 
-                          <p>{comida.description}</p>
-                        </div>
-                        <div className="card-left noselect">
+                          <p className='p-1'>{comida.description}</p>
+                        </div>                        
+                        <div className="col-4 noselect">
                           <p>
                             {comida.qtd > 0 &&
                               (Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(comida.value * comida.qtd))}
@@ -365,13 +367,13 @@ export default function Menu() {
           />
 
           <button onClick={() => validar()} className="button d-flex justify-content-center" type="submit">
-          {!loader && 'Realizar pedido'}  
+            {!loader && 'Realizar pedido'}
             {loader && (<ThreeDots
               height="50px"
               width="50px"
               color="white"
               ariaLabel="loading"
-            />)}    
+            />)}
           </button>
         </div>
       </div>

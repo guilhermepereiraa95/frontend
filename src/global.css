@@ -106,3 +106,8 @@ form textarea {
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
 }
+
+td {
+  padding: 10px !important;  
+  background-color: #dcdce6 !important;
+}

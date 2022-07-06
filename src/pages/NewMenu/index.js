@@ -55,7 +55,11 @@ export default function NewMenu() {
 
     try {
 
-      await api.post('produtos', data);
+      await api.post('produtos', data, {
+        headers: {
+          Authorization: token,
+        }
+      });
 
       history.push('/produtos');
     } catch (err) {

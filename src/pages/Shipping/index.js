@@ -4,12 +4,12 @@ import { FiPower, FiTrash2, FiEdit2 } from 'react-icons/fi';
 import jwt_decode from 'jwt-decode';
 import api from '../../services/api';
 
-import './styles.css';
+// import './styles.css';
 
 import logoImg from '../../assets/logo.svg';
 import Menu from '../../components/menu';
 
-export default function Products() {
+export default function Shipping() {
   const [menu, setMenu] = useState([]);
   const m = useRef([]);
 
@@ -115,7 +115,7 @@ export default function Products() {
     <div className="container">
       <header className="row py-3">
         <div className="col-9">
-          <h1>Produtos</h1>
+          <h1>Frete</h1>
         </div>
         <div className="col-3">
           <Link className="btn btn-lg btn-danger" to="/produto/novo">Cadastrar novo item</Link>

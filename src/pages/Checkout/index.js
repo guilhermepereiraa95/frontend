@@ -13,7 +13,6 @@ export default function Checkout() {
   const {pedido, setPedido} = useContext(PusherContext);
   const [total, setTotal] = useState();
   const [pusher, setPusher] = useState();
-
   const params = useParams();
 
   
@@ -23,15 +22,17 @@ export default function Checkout() {
           setItems(response.data);
           let total = 0;
             response.data.map(items =>{
-              total =+ total + items.value;
+              total =+ (total + items.value) * items.qtd;
             })
             setTotal(total)
-        })
+        }).then(
+          api.get(`pedidos/${params.id}`).then(res => {
+            setPedido(res.data);
+  
+          })
+        )
 
-        api.get(`pedidos/${params.id}`).then(res => {
-          setPedido(res.data);
-
-        })
+        
 
         const pusherInstance = new Pusher('81dfc3beb94ac0494c83', {
           cluster: 'sa1'
@@ -39,14 +40,18 @@ export default function Checkout() {
 
         setPusher(pusherInstance);
       }   
+      
   }, []);
 
       useEffect(() => {
+        
           if(pusher){
             var channel = pusher.subscribe('smokemeat-chanel');
             channel.bind('confirmacao-pedido', function(data) {
               
-              setPedido(data)
+              setPedido(data).then(
+                console.log(pedido.data)
+              )
               
             });      
           }
@@ -62,28 +67,32 @@ export default function Checkout() {
       </div>
         <div className="col-12 d-flex justify-content-center">
           <section className='card card-body'>  
-          <p className='h2 text-center'>Acompanhamento do pedido {pedido.id}</p>
+          <p className='h2 text-center'>Acompanhamento do pedido {pedido.id} - {pedido.data}</p>
           <p className='h3 text-center'>Obrigado pela preferência, {pedido.nome}!</p>
           <p>Local: {pedido.localizacao}</p> 
-          <div class="progress">
+          <p>Pedido feito em: {pedido.hora}</p>
+          {pedido.status === "Pedido sendo preparado!" && (
+            <p>Prazo de entrega: {pedido.hora}</p>
+          )}
+          <div className="progress">
             {
               pedido.status === "Pedido aguardando confirmação"
               && (
-                <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated" role="progressbar" 
+                <div className="progress-bar bg-danger progress-bar-striped progress-bar-animated" role="progressbar" 
                 style={{width: '15%'}}></div>
               )
             }
             {
               pedido.status === "Pedido sendo preparado!"
               && (
-                <div class="progress-bar bg-warning progress-bar-striped progress-bar-animated" role="progressbar" 
+                <div className="progress-bar bg-warning progress-bar-striped progress-bar-animated" role="progressbar" 
                 style={{width: '40%'}}></div>
               )
             }
             {
               pedido.status === "Saiu para entrega"
               && (
-                <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar" 
+                <div className="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar" 
                 style={{width: '60%'}}></div>
               )
             }

@@ -34,7 +34,7 @@ export default function Items() {
             setItems(response.data);
             let total = 0;
             response.data.map(items =>{
-              total =+ total + items.value;
+              total =+ (total + items.value) * items.qtd;
             })
             setTotal(total)
         }).catch((err) => {
@@ -78,7 +78,7 @@ export default function Items() {
       </header>
 
 
-      <table className="table table-secondary table-striped table-bordered table-hover text-center">
+      <table className="table table-secondary noselect  table-bordered table-hover text-center">
           <tbody>
           <tr>
             <td>Item</td>

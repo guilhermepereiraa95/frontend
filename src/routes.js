@@ -9,6 +9,7 @@ import NewMenu from './pages/NewMenu';
 import EditMenu from './pages/EditMenu';
 import Items from './pages/Items';
 import Checkout from './pages/Checkout';
+import Shipping from './pages/Shipping';
 
 export default function Routes() {
   return (
@@ -21,6 +22,9 @@ export default function Routes() {
         
         <Route path="/" exact component={Menu} />
         <Route path="/checkout/:id" component={Checkout} />
+
+        
+        <Route path="/frete" component={Shipping} />
         
         <Route path="/login" component={Login} />
         <Route path="/produtos" component={Products} />

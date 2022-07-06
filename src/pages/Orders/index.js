@@ -115,13 +115,15 @@ export default function Profile() {
         </div>
       </div>
 
-      <table className="table table-secondary table-striped table-bordered table-hover text-center">
+      <table className="table table-secondary noselect  table-bordered table-hover text-center">
           <tbody>
           <tr>
             <td>ID</td>
             <td>Nome</td>
             <td>Endereço</td>            
             <td>Pagamento</td>
+            <td>Data</td>
+            <td>Hora</td>
             <td></td>
           </tr>
           {orders.map(orders => (
@@ -130,6 +132,8 @@ export default function Profile() {
               <td>{orders.nome}</td>
               <td>{orders.localizacao}</td>
               <td>{orders.pagamento}</td>
+              <td>{orders.data}</td>
+              <td>{orders.hora}</td>
               <td>
                 <a data-bs-toggle="tooltip" data-bs-placement="bottom" title={orders.status}
                 type="button" href={`/pedido-produto/${orders.id}`}  className="btn btn-danger position-relative">
