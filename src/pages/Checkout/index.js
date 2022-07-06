@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useContext } from 'react';
 import Pusher from 'pusher-js';
-import {FiClock, FiHome, FiZap} from 'react-icons/fi'
+import {FiActivity, FiClock, FiHome, FiPlayCircle, FiZap} from 'react-icons/fi'
 import api from '../../services/api';
 import './styles.css';
 
@@ -74,7 +74,7 @@ export default function Checkout() {
             <FiClock></FiClock>&nbsp;{pedido.hora}
           </p>
           {pedido.status === "Pedido sendo preparado!" && (
-            <p><FiZap></FiZap>&nbsp;{pedido.hora}</p>
+            <p><FiPlayCircle></FiPlayCircle>&nbsp;{pedido.hora}</p>
           )}
           {pedido.status === "Saiu para entrega" && (
             <p><FiHome></FiHome>&nbsp;{pedido.hora}</p>
