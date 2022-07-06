@@ -52,7 +52,6 @@ export default function Checkout() {
       var channel = pusher.subscribe('smokemeat-chanel');
       channel.bind('confirmacao-pedido', function (data) {
         setPedido(data)
-        setLoader(false)
       });
     }
     return;
