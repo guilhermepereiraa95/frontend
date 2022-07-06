@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useContext } from 'react';
 import Pusher from 'pusher-js';
-
+import {FiClock, FiHome, FiZap} from 'react-icons/fi'
 import api from '../../services/api';
 import './styles.css';
 
@@ -70,9 +70,14 @@ export default function Checkout() {
           <p className='h2 text-center'>Acompanhamento do pedido {pedido.id} - {pedido.data}</p>
           <p className='h3 text-center'>Obrigado pela preferência, {pedido.nome}!</p>
           <p>Local: {pedido.localizacao}</p> 
-          <p>Pedido feito em: {pedido.hora}</p>
+          <p className='d-flex align-items-center'>
+            <FiClock></FiClock>&nbsp;{pedido.hora}
+          </p>
           {pedido.status === "Pedido sendo preparado!" && (
-            <p>Prazo de entrega: {pedido.hora}</p>
+            <p><FiZap></FiZap>&nbsp;{pedido.hora}</p>
+          )}
+          {pedido.status === "Saiu para entrega" && (
+            <p><FiHome></FiHome>&nbsp;{pedido.hora}</p>
           )}
           <div className="progress">
             {
