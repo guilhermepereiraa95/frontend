@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { FiPower, FiTrash2, FiEdit2 } from 'react-icons/fi';
 import jwt_decode from 'jwt-decode';
@@ -8,6 +8,7 @@ import './styles.css';
 
 import logoImg from '../../assets/logo.svg';
 import Menu from '../../components/menu';
+import toast from 'react-hot-toast';
 
 export default function Products() {
   const [menu, setMenu] = useState([]);
@@ -36,16 +37,21 @@ export default function Products() {
     }
   ]);
 
-  useState(() => {
-    api.get('produtos', {
-      headers: {
-        Authorization: token,
-      }
-    }).then(response => {
-      setMenu(response.data.produtos)
-      m.current = response.data.produtos;
-    })
-  });
+  useEffect(() => {
+    try {
+      api.get('produtos', {
+        headers: {
+          Authorization: token,
+        }
+      }).then(response => {
+        setMenu(response.data.produtos)
+        m.current = response.data.produtos;
+      })
+    } catch (err) {
+      alert(err)
+    }
+    
+  }, [menu]);
 
   async function handleEditMenu(id) {
     try {
@@ -139,7 +145,7 @@ export default function Products() {
         </div>
       </div>
 
-      <table className="table table-secondary noselect  table-bordered table-hover text-center">
+      <table className="table noselect table-hover text-center mt-1">
           <tbody>
           <tr>
             <td>ID</td>

@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { FiPlay } from 'react-icons/fi';
 
+import toast, { Toaster } from 'react-hot-toast';
+
 import api from '../../services/api';
 
 import './styles.css';
@@ -30,7 +32,6 @@ export default function Items() {
             Authorization: token,
           }
         }).then(response => {
-          console.log(response)
             setItems(response.data);
             let total = 0;
             response.data.map(items =>{
@@ -38,12 +39,14 @@ export default function Items() {
             })
             setTotal(total)
         }).catch((err) => {
-          console.log(err)
+          toast.error(err.message)
         });
 
         api.get(`pedidos/${params.id}`).then(res => {
           setPedido(res.data);    
-        })
+        }).catch((err) => {
+          toast.error(err.message)
+        });
     }
   }, []);
 
@@ -57,16 +60,17 @@ export default function Items() {
         Authorization: token,
       }
     }).then(() => {
-      alert('Pedido confirmado para o cliente!');
-      history.push('/pedidos');
-    })
+      toast.success('Pedido confirmado para o cliente!');
+    }).catch((err) => {
+      toast.error(err.message)
+    });
   }
 
   return (
     <div>
     <Menu />
     <div className="profile-container">
-      
+      <Toaster></Toaster>
       <h1 className="text-center">Pedido {params.id}</h1>
       <header className="pb-1">
         
@@ -78,7 +82,7 @@ export default function Items() {
       </header>
 
 
-      <table className="table table-secondary noselect  table-bordered table-hover text-center">
+      <table className="table noselect table-hover text-center">
           <tbody>
           <tr>
             <td>Item</td>

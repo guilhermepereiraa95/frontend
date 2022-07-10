@@ -3,6 +3,7 @@ import Pusher from 'pusher-js';
 import { FiActivity, FiClock, FiHome, FiPlayCircle, FiZap } from 'react-icons/fi'
 import api from '../../services/api';
 import './styles.css';
+import toast, { Toaster } from 'react-hot-toast';
 
 import logoImg from '../../assets/logo.svg';
 import { useParams } from 'react-router-dom';
@@ -32,8 +33,12 @@ export default function Checkout() {
         .finally(() => setLoader(false))
         .then(res => {
           setPedido(res.data);
+        }).catch((err) => {
+          toast.error(err.message)
         })
-      )
+      ).catch((err) => {
+        toast.error(err.message)
+      });
 
 
 
@@ -59,11 +64,12 @@ export default function Checkout() {
 
   return (
     <div className="checkout-container">
+      <Toaster></Toaster>
       {
         loader && (<ThreeDots
               height="50px"
               width="50px"
-              color="black"
+              color="red"
               ariaLabel="loading"
             />)
       }
@@ -81,10 +87,10 @@ export default function Checkout() {
                 <FiClock></FiClock>&nbsp;{pedido.hora}
               </p>
               {pedido.status === "Pedido sendo preparado!" && (
-                <p><FiPlayCircle></FiPlayCircle>&nbsp;{pedido.hora}</p>
+                <p className='d-flex align-items-center'><FiPlayCircle></FiPlayCircle>&nbsp;{pedido.hora}</p>
               )}
               {pedido.status === "Saiu para entrega" && (
-                <p><FiHome></FiHome>&nbsp;{pedido.hora}</p>
+                <p className='d-flex align-items-center'><FiHome></FiHome>&nbsp;{pedido.hora}</p>
               )}
               <div className="progress">
                 {

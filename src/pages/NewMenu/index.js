@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { FiArrowLeft } from 'react-icons/fi';
 import Menu from '../../components/menu';
+import toast, {Toaster} from 'react-hot-toast';
 
 import api from '../../services/api';
 
@@ -59,6 +60,8 @@ export default function NewMenu() {
         headers: {
           Authorization: token,
         }
+      }).catch((err) => {
+        toast.error(err.message)
       });
 
       history.push('/produtos');
@@ -76,6 +79,7 @@ export default function NewMenu() {
     <div>
     <Menu />
     <div className="new-menu-container">
+      <Toaster></Toaster>
       <div className="content">
         <section>
           <img src={logoImg} alt="Smoke Meat House"/>

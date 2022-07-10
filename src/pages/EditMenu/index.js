@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { FiArrowLeft } from 'react-icons/fi'
+import { FiArrowLeft } from 'react-icons/fi';
+import toast, {Toaster} from 'react-hot-toast';
 
 import api from '../../services/api';
 
@@ -56,6 +57,8 @@ export default function EditMenu() {
           setDescription(response.data[0].description)
           setValue(response.data[0].value)
           setType(response.data[0].type)
+        }).catch((err) => {
+          toast.error(err.message)
         });
       }
     } catch (err) {
@@ -83,9 +86,13 @@ export default function EditMenu() {
         headers: {
           Authorization: token,
         }
+      }).then(() => { 
+        history.push('/produtos');
+      })
+      .catch((err) => {
+        toast.error(err.message)
       });
 
-      history.push('/produtos');
     } catch (err) {
       alert('Erro ao cadastrar caso, tente novamente.');
     }
@@ -93,6 +100,7 @@ export default function EditMenu() {
 
   return (
     <div className="edit-menu-container">
+      <Toaster></Toaster>
       <div className="content">
         <section>
           <img src={logoImg} alt="Smoke Meat"/>

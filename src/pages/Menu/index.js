@@ -44,7 +44,7 @@ export default function Menu() {
     },
   })
 
-  const [loader, setLoader] = useState(false);
+  const [loader, setLoader] = useState(true);
   // const [nome, setNome] = useState([]);
   const [total, setTotal] = useState([0]);
   // const [localizacao, setLocalizacao] = useState([]);
@@ -94,7 +94,6 @@ export default function Menu() {
   ]);
 
   useEffect(() => {
-
     api.get('produtos').then(response => {
 
       const lanches = response.data.lanches.map((item) => ({ ...item, qtd: 0 }));
@@ -102,6 +101,10 @@ export default function Menu() {
       const porcoes = response.data.porcoes.map((item) => ({ ...item, qtd: 0 }));
       const sobremesas = response.data.sobremesas.map((item) => ({ ...item, qtd: 0 }));
       setMenu({ lanches, bebidas, porcoes, sobremesas });
+    }).finally(() => {
+      setLoader(false)
+    }).catch((err) => {
+      toast.error(err.message)
     });
 
   }, [])
@@ -305,8 +308,18 @@ export default function Menu() {
               <option key={tipos.id} value={tipos.value}>{tipos.label}</option>
             ))}
           </select>
-
+          {loader && (
           <div className="menu-items">
+            <ThreeDots
+            style="justify-content:center"
+            height="50px"
+            width="50px"
+            color="red"
+            ariaLabel="loading"
+            className="d-flex justify-content-center align-items-center"
+          />
+          </div>)}
+          {!loader && (<div className="menu-items">
             {Object.keys(menu).map(key => (
               <div key={key}>
                 <h3 id={key}>{key}</h3>
@@ -351,6 +364,7 @@ export default function Menu() {
               </div>
             ))}
           </div>
+          )}
 
           <select name="pagamento" value={values.pagamento} className="form-select form-select-lg my-3" onChange={handleChange}>
             {pagamentos.map((pagamentos) => (
@@ -369,6 +383,7 @@ export default function Menu() {
           <button onClick={() => validar()} className="button d-flex justify-content-center" type="submit">
             {!loader && 'Realizar pedido'}
             {loader && (<ThreeDots
+              className="d-flex justify-content-center align-items-center"
               height="50px"
               width="50px"
               color="white"

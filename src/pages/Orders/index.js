@@ -115,7 +115,7 @@ export default function Profile() {
         </div>
       </div>
 
-      <table className="table table-secondary noselect  table-bordered table-hover text-center">
+      <table className="table noselect table-hover text-center mt-1">
           <tbody>
           <tr>
             <td>ID</td>

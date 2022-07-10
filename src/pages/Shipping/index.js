@@ -126,7 +126,7 @@ export default function Shipping() {
         <div className='col-9'>
           <input
             className="form-control"
-            placeholder="Pesquise o pedido"
+            placeholder="Km"
             onKeyUp={e => handleSearch(e.target.value)}
           />
         </div>
